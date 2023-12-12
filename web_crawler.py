@@ -4,6 +4,7 @@ import random
 import time
 
 def get_index():
+    """从小说的目录页获取每章对应的网址"""
     url = "https://www.31xs.com/149/149961/" 
     url_root = "https://www.31xs.com/"
     header = {
@@ -28,6 +29,7 @@ def get_index():
     return words
 
 def get_chapter(tar, header):
+    """依次抓取每章的文本内容"""
     while True:
         try:
             req = requests.get(url = tar[0], headers = header, timeout = 1000)
@@ -46,20 +48,20 @@ def get_chapter(tar, header):
         
         
 def get_content(novel_name, num = 0):
+    """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
     target = get_index()
     header = {"User-Agent":
                   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"}
     with open("D:/download/" + novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
-        for tar in target[num:]:
-            texts_list = get_chapter(tar, header)
+        for tar in target[num:]:            
+            texts_list = get_chapter(tar, header) # 抓取单章的内容            
             print(f"正在下载{num}：{tar[1]}")
-            file.write(tar[1])
-            for line in texts_list:
+            file.write(tar[1])  # 写入章节标题
+            for line in texts_list: # 逐行写入章节内容
                 file.write(line)            
-            num = num + 1
+            num = num + 1  # 章节计数加1
     
 if __name__ == '__main__':
     novel_name = "梦回大明春"
-    num = 0
-    
+    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容    
     get_content(novel_name, num)
