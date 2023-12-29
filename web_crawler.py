@@ -34,7 +34,7 @@ def get_chapter(tar):
             time.sleep(1) # 请求失败后延迟1s再次请求
     
     # 通过延时来降低爬虫的请求频率，减小被反爬的风险                
-    ran = random.randint(2,5)
+    ran = random.randint(1,2)
     time.sleep(ran)
     
     # 解析网页内容
@@ -59,7 +59,7 @@ def get_content(novel_name, url_index, num = 0):
             num = num + 1  # 章节计数加1
     
 if __name__ == '__main__':
-    novel_name = "梦回大明春"
-    url = "https://www.31xs.com/149/149961/" 
+    novel_name = "我非痴愚实乃纯良"
+    url = "https://www.31xs.com/150/150363/" 
     num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容    
     get_content(novel_name, url, num)
