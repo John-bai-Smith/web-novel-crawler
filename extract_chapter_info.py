@@ -1,5 +1,14 @@
 from bs4 import BeautifulSoup
+import os
+import shutil
 
+def delete_if_exists(path):
+    if os.path.exists(path):
+        if os.path.isfile(path):
+            os.remove(path)  # 删除文件
+        elif os.path.isdir(path):
+            shutil.rmtree(path)  # 删除目录
+            
 def read_html(filename):
     """从本地读取一个HTML文件"""
     with open(filename, 'r', encoding='utf-8') as f:
@@ -29,9 +38,13 @@ def write_files(words, file_1, file_2):
 if __name__ == '__main__':
     url_root = 'https://www.31xs.com'
     file_address = 'files/'
-    html_file = file_address + 'content.html'
-    url_file = file_address + 'chapter_url.txt'
-    name_file = file_address + 'chapter_name.txt'
+    html_file_path = file_address + 'content.html'
+    url_file_path = file_address + 'chapter_url.txt'
+    name_file_path = file_address + 'chapter_name.txt'
+    
+    # 清理可能存在的历史文件
+    delete_if_exists(url_file_path)
+    delete_if_exists(name_file_path)
      
-    words = get_chapter_list_local(html_file, url_root)
-    write_files(words, url_file, name_file)
+    words = get_chapter_list_local(html_file_path, url_root)
+    write_files(words, url_file_path, name_file_path)

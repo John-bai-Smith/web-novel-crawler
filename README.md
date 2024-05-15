@@ -17,3 +17,15 @@
 Quicker动作库链接如下：
 
 [反爬-下载html](https://getquicker.net/Sharedaction?code=aaf6e0b2-35dc-4040-c2d6-08dc74bc40ca&fromMyShare=True)
+
+使用流程：
+
+0. 确认脚本和Quicker读取文件的路径是否正确（默认是绝对路径，不同计算机上需要单独设置），确认小说名和网址
+
+1. 在小说目录页手动保存html，命名为`content.html`，放在`.\files\`目录下
+
+2. 运行 `extract_chapter_info.py`，获得`chapter_name.txt`和`chapter_url`文件
+
+3. 运行Quicker动作，下载html
+
+4. 将下载好的html文件移动到`.\files\`目录下，运行`local_crawler.py`，获得小说文件

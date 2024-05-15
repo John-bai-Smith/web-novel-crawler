@@ -1,20 +1,20 @@
 from bs4 import BeautifulSoup
 from extract_chapter_info import read_html, get_chapter_list_local
 file_address = 'files/'
-novel_address = 'D:/download/'
 
 def get_chapter_local(chapter_name):
     """依次抓取每章的文本内容"""
-    html = read_html(file_address + chapter_name + '.html')
+    chapter_path = file_address + chapter_name + '.html'
+    html = read_html(chapter_path)
     bes = BeautifulSoup(html, "lxml")
     texts = bes.find("div", id = "content")
     texts_list = texts.text.replace("章节报错", "") 
     return texts_list
         
-def get_content(novel_name, html_file, url_root, num = 0):
+def get_content(novel_path, html_file, url_root, num = 0):
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
     target = get_chapter_list_local(html_file, url_root)
-    with open(novel_address + novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
+    with open(novel_path, "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for tar in target[num:]:            
             texts_list = get_chapter_local(tar[1]) # 抓取单章的内容            
             print(f"正在下载{num}：{tar[1]}")
@@ -25,9 +25,10 @@ def get_content(novel_name, html_file, url_root, num = 0):
     
 if __name__ == '__main__':
     novel_name = "怪物被杀就会死"
-    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
-    url_root = 'https://www.31xs.com'
-    
+    novel_address = 'D:/download/'
+    novel_path = novel_address + novel_name + ".txt"
     html_file = file_address + 'content.html'
-   
-    get_content(novel_name, html_file, url_root, num)
+    url_root = 'https://www.31xs.com'
+    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+     
+    get_content(novel_path, html_file, url_root, num)
