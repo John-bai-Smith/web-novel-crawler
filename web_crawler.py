@@ -4,13 +4,27 @@ import random
 import time
 
 header = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"}
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, deflate",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+    "Cache-Control": "no-cache",
+    "Priority": "u=0, i",
+    "Sec-Ch-Ua": '"Chromium";v="124", "Microsoft Edge";v="124", "Not-A.Brand";v="99"',
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "Windows",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+}
    
-def get_index(url_index):
+def get_index(url_index, url_root):
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
-    url_root = "https://www.31xs.com/"
-    req = requests.get(url = url_index, headers = header)
+    req = requests.get(url = url_index, headers = header, timeout = 10)
     req.encoding = "utf-8"
+    print(req.text)
     bes = BeautifulSoup(req.text, "lxml")
     texts = bes.find("div", id = "list")
     chapters = texts.find_all("a") #该函数可以返回list下的标签为a的所有信息
@@ -44,11 +58,9 @@ def get_chapter(tar):
     texts_list = texts.text.replace("章节报错", "") 
     return texts_list       
         
-def get_content(novel_name, url_index, num = 0):
+def get_content(novel_name, url_index, url_root, num = 0):
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
-    target = get_index(url_index)
-    header = {"User-Agent":
-                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"}
+    target = get_index(url_index, url_root)
     with open("D:/download/" + novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for tar in target[num:]:            
             texts_list = get_chapter(tar) # 抓取单章的内容            
@@ -59,7 +71,8 @@ def get_content(novel_name, url_index, num = 0):
             num = num + 1  # 章节计数加1
     
 if __name__ == '__main__':
-    novel_name = "我非痴愚实乃纯良"
-    url = "https://www.31xs.com/150/150363/" 
+    novel_name = "怪物被杀就会死"
+    url_root = "https://www.bqguu.cc"
+    url = "https://www.bqguu.cc/book/1542/"
     num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容    
-    get_content(novel_name, url, num)
+    get_content(novel_name, url, url_root, num)
