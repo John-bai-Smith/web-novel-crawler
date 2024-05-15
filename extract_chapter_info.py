@@ -11,9 +11,13 @@ def delete_if_exists(path):
             
 def read_html(filename):
     """从本地读取一个HTML文件"""
-    with open(filename, 'r', encoding='utf-8') as f:
-        html = f.read()
-    return html
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            html = f.read()
+        return html
+    except IOError as e:
+        print(f"打开文件{filename}时出错: {e}")
+        return None  
 
 def get_chapter_list_local(html_name, url_root):
     content_html = read_html(html_name)
