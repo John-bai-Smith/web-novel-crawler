@@ -35,9 +35,9 @@ def get_chapter_list_local(html_name, url_root):
 
 def write_files(words, file_1, file_2):
     with open(file_1, "a", encoding = "utf-8") as file_url, open(file_2, "a", encoding = "utf-8") as file_name:
-        for word in words:       
+        for i, word in enumerate(words):       
             file_url.write(word[0] + '\n')
-            file_name.write(word[1] + '\n')
+            file_name.write(str(i) + '-' + word[1] + '\n')
         
 if __name__ == '__main__':
     url_root = 'https://www.31xs.com'
