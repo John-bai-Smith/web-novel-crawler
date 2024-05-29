@@ -29,3 +29,7 @@ Quicker动作库链接如下：
 3. 运行Quicker动作，下载html
 
 4. 将下载好的html文件移动到`.\files\`目录下，运行`local_crawler.py`，获得小说文件
+
+## 2024/05/29 更新
+
+新增电子书[修订记录](ebook/README.md)线上同步
