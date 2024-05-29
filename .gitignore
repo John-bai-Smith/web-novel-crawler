@@ -1,4 +1,5 @@
 wc_env/
 .history/
+.vs/
 __pycache__/
 files/
