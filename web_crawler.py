@@ -4,6 +4,14 @@ import random
 import time
 import sys
 
+url_root_list = ['https://www.uuks5.com',
+                 'https://www.bqguu.cc']
+
+novel_name = "这游戏也太真实了"
+url_root = url_root_list[0]
+url_index = "https://www.uuks5.com/book/489939/"
+num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+    
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Encoding": "gzip, deflate",
@@ -32,13 +40,14 @@ find_content_params = {
     "https://www.bqguu.cc": ('div', {'id': 'chaptercontent'}),
 }
 
-def get_novel(novel_name, url_index, url_root, num = 0):
+def get_novel():
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
-    index_list = get_index(url_index, url_root)
-    with open("D:/download/" + novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
+    global num
+    index_list = get_index()
+    with open(novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for chapter_list in index_list[num:]:         
             print(f"正在下载{num}：{chapter_list[1]}")
-            paragraphs_list = get_chapter(url_root, chapter_list) # 抓取单章的内容
+            paragraphs_list = get_chapter(chapter_list) # 抓取单章的内容
             file.write(f'\n\n\n{chapter_list[1]}\n') # 写入章节标题
             for line in paragraphs_list: # 逐行写入章节内容
                 line = line.get_text().strip()
@@ -50,26 +59,26 @@ def get_novel(novel_name, url_index, url_root, num = 0):
             ran = random.randint(1,3)
             time.sleep(ran)
 
-def get_index(url_index, url_root):
+def get_index():
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
     bes = get_page(url_index)
-    index_list = process_index_page(url_root, bes)    
+    index_list = process_index_page(bes)    
     return index_list
 
-def get_page(url_index):
+def get_page(url_page):
     """获取网页的html文本内容"""
-    req = requests.get(url = url_index, headers = header, timeout = 10)
+    req = requests.get(url = url_page, headers = header, timeout = 100)
     req.encoding = "utf-8"
     bes = BeautifulSoup(req.text, "lxml")
     return bes
 
-def process_index_page(url_root, beautifulsoup):
+def process_index_page(beautifulsoup):
     """对目录页的html内容进行处理，获得章节网址-章节标题的列表"""
-    texts = extract_text(url_root, beautifulsoup, find_index_params)
+    texts = extract_text(beautifulsoup, find_index_params)
     index_list = extract_index_list(texts)       
     return index_list
 
-def extract_text(url_root, beautifulsoup, find_params):
+def extract_text(beautifulsoup, find_params):
     tag_name, attrs = find_params.get(url_root)
     if tag_name is not None:
         if attrs is not None:
@@ -98,7 +107,7 @@ def extract_index_list(texts):
         words.append(word) #最终加入总的大列表中并返回  
     return words
 
-def get_chapter(url_root, chapter_list):
+def get_chapter(chapter_list):
     """依次抓取每章的文本内容"""
     while True:
         try:
@@ -108,12 +117,12 @@ def get_chapter(url_root, chapter_list):
             print(f"出现错误：{e}，正在重新运行...")
             time.sleep(1) # 请求失败后延迟1s再次请求
     
-    texts_list = process_chapter_page(url_root, bes)
+    texts_list = process_chapter_page(bes)
     return texts_list       
         
-def process_chapter_page(url_root, beautifulsoup):
+def process_chapter_page(beautifulsoup):
     """处理章节页"""
-    texts = extract_text(url_root, beautifulsoup, find_content_params)
+    texts = extract_text(beautifulsoup, find_content_params)
     par_list = extract_paragraph(texts)
     return par_list
 
@@ -122,19 +131,4 @@ def extract_paragraph(texts):
     return par_list
     
 if __name__ == '__main__':
-    # 目前可以使用的网站 url_root
-    # 1. "https://www.bqguu.cc" 
-    # 2. "https://www.uuks5.com"
-    # 已经失效的网站
-    # 1. "https://www.31xs.com"
-    # 2. "https://www.ddxs.com"
-    
-    novel_name = "这游戏也太真实了"
-    url_root = "https://www.uuks5.com"
-    url = "https://www.uuks5.com/book/489939/"
-    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
-    
-    # 下一步优化方案，把抓取页面封装为一个函数，抓取目录的抓取章节函数中调用抓取页面
-    # 把目录和章节的内容处理封装为单独的函数
-    # 把章节内容去除多余内容封装为单独的函数
-    get_novel(novel_name, url, url_root, num)
+    get_novel()
