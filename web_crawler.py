@@ -48,7 +48,7 @@ def get_chapter(tar):
             time.sleep(1) # 请求失败后延迟1s再次请求
     
     # 通过延时来降低爬虫的请求频率，减小被反爬的风险                
-    ran = random.randint(1,2)
+    ran = random.randint(1,3)
     time.sleep(ran)
     
     # 解析网页内容
@@ -71,8 +71,16 @@ def get_content(novel_name, url_index, url_root, num = 0):
             num = num + 1  # 章节计数加1
     
 if __name__ == '__main__':
+    # 目前可以使用的网站 url_root
+    # 1. "https://www.bqguu.cc" 
+    # 2. "https://www.uuks5.com"
+    # 已经失效的网站
+    # 1. "https://www.31xs.com"
+    # 2. "https://www.ddxs.com"
+    
     novel_name = "怪物被杀就会死"
     url_root = "https://www.bqguu.cc"
     url = "https://www.bqguu.cc/book/1542/"
-    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容    
+    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+        
     get_content(novel_name, url, url_root, num)
