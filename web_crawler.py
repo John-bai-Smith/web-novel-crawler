@@ -10,7 +10,7 @@ url_root_list = ['https://www.uuks5.com',
 novel_name = "这游戏也太真实了"
 url_root = url_root_list[0]
 url_index = "https://www.uuks5.com/book/489939/"
-num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+num = 72 # 决定了从第几章开始新增，用于增量式更新文本内容
     
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -80,18 +80,7 @@ def process_index_page(beautifulsoup):
 
 def extract_text(beautifulsoup, find_params):
     tag_name, attrs = find_params.get(url_root)
-    if tag_name is not None:
-        if attrs is not None:
-            texts = beautifulsoup.find(tag_name, **attrs)
-        else:
-            texts = beautifulsoup.find(tag_name)
-            
-        if texts is None:
-            print('No texts found')
-            sys.exit()          
-    else:
-        print(f'No parameters found for url_root: {url_root}')
-        sys.exit()
+    texts = beautifulsoup.find(tag_name, **attrs)
     return texts
 
 def extract_index_list(texts):
