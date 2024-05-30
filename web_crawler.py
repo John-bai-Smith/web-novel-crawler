@@ -10,7 +10,7 @@ url_root_list = ['https://www.uuks5.com',
 novel_name = "这游戏也太真实了"
 url_root = url_root_list[0]
 url_index = "https://www.uuks5.com/book/489939/"
-num = 72 # 决定了从第几章开始新增，用于增量式更新文本内容
+num = 144 # 决定了从第几章开始新增，用于增量式更新文本内容
     
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -101,12 +101,16 @@ def get_chapter(chapter_list):
     while True:
         try:
             bes = get_page(chapter_list[0])
-            break
+            try:
+                texts_list = process_chapter_page(bes)
+            except AttributeError as e:
+                print(f"出现错误：{e}，正在重新运行...")
+                time.sleep(1) # 请求失败后延迟1s再次请求
+            if texts_list:    
+                break
         except Exception as e:
             print(f"出现错误：{e}，正在重新运行...")
-            time.sleep(1) # 请求失败后延迟1s再次请求
-    
-    texts_list = process_chapter_page(bes)
+            time.sleep(1) # 请求失败后延迟1s再次请求 
     return texts_list       
         
 def process_chapter_page(beautifulsoup):
