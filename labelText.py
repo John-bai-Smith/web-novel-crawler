@@ -29,5 +29,5 @@ def add_blank_line(file, file_modified):
                 f.write(line)  # 如果行为空，原样写回
                 
 if __name__ == '__main__':
-    # add_xml_label(file_name, file_modified_name)
-    add_blank_line(file_name, file_modified_name)
+    add_xml_label(file_name, file_modified_name)
+    # add_blank_line(file_name, file_modified_name)
