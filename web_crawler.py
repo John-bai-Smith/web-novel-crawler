@@ -10,7 +10,7 @@ url_root_list = ['https://www.uuks5.com',
 novel_name = "这游戏也太真实了"
 url_root = url_root_list[0]
 url_index = "https://www.uuks5.com/book/489939/"
-num = 144 # 决定了从第几章开始新增，用于增量式更新文本内容
+num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
     
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
