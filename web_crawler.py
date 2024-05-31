@@ -2,15 +2,18 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import time
-import sys
 
 url_root_list = ['https://www.uuks5.com',
                  'https://www.bqguu.cc']
 
-novel_name = "这游戏也太真实了"
-url_root = url_root_list[0]
-url_index = "https://www.uuks5.com/book/489939/"
 num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+novel_name = "神秘复苏"
+url_root = ''
+url_index = "https://www.bqgui.cc/book/66/"
+for url_rt in url_root_list:
+    if url_rt in url_index:
+        url_root = url_rt
+        break
     
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -40,16 +43,42 @@ find_content_params = {
     "https://www.bqguu.cc": ('div', {'id': 'chaptercontent'}),
 }
 
+find_extract_params = {
+    "https://www.uuks5.com": 'p',
+    "https://www.bqguu.cc": '',
+}
+
+find_chapter_name = {
+    "https://www.uuks5.com": True,
+    "https://www.bqguu.cc": False,
+}
+
+skip_chapter = '展开全部章节'
+
 def get_novel():
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
     global num
     index_list = get_index()
     with open(novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
-        for chapter_list in index_list[num:]:         
-            print(f"正在下载{num}：{chapter_list[1]}")
+        for chapter_list in index_list[num:]:
+            # 判断是否需要跳过当前章节
+            if skip_chapter in chapter_list[1]:
+                print(f"已跳过{num}：{chapter_list[1]}")
+                num = num + 1
+                continue
+            else:         
+                print(f"正在下载{num}：{chapter_list[1]}")
+                
             paragraphs_list = get_chapter(chapter_list) # 抓取单章的内容
-            file.write(f'\n\n\n{chapter_list[1]}\n') # 写入章节标题
-            for line in paragraphs_list: # 逐行写入章节内容
+            
+            # 判断是否需要写入章节标题
+            if find_chapter_name.get(url_root): 
+                file.write(f'\n\n\n{chapter_list[1]}\n') # 写入章节标题
+            else:
+                file.write('\n\n\n') # 部分网页内容带有章节标题，不需要再单独写入
+            
+            # 逐行写入章节内容    
+            for line in paragraphs_list: 
                 line = line.get_text().strip()
                 if line:            
                     file.write(f'    {line}\n')            
@@ -116,11 +145,15 @@ def get_chapter(chapter_list):
 def process_chapter_page(beautifulsoup):
     """处理章节页"""
     texts = extract_text(beautifulsoup, find_content_params)
-    par_list = extract_paragraph(texts)
+    tag = find_extract_params.get(url_root)
+    if tag:
+        par_list = extract_paragraph(texts, tag)
+    else:
+        par_list = texts
     return par_list
 
-def extract_paragraph(texts):
-    par_list = texts.find_all("p")
+def extract_paragraph(texts, tag):
+    par_list = texts.find_all(tag)
     return par_list
     
 if __name__ == '__main__':
