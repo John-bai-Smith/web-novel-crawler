@@ -1,3 +1,28 @@
+# 功能演示
+
+## web_crawler.py
+
+- 从特定网站爬取文本
+
+## local_crawler.py
+
+- 从本地html文件读取文本
+
+## label_test.py
+
+- 添加xml标记
+
+- 添加段间空行
+
+## erase_word.py
+
+- 清除文本中的垃圾词组
+
+![erase_word_demo.jpg](./erase_word_demo.jpg "Demonstration for erase_word.py")
+
+
+# 更新日志
+
 ## 初版
 
 目前只测试一个网站：[31小说](https://www.31xs.com/)
@@ -41,3 +66,7 @@ Quicker动作库链接如下：
 [UU看书](https://www.uuks5.com/)
 
 [笔趣阁](https://www.bqgui.cc/)
+
+## 2024/06/01 更新
+
+更新了清除垃圾词的脚本

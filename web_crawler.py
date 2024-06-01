@@ -3,18 +3,6 @@ from bs4 import BeautifulSoup
 import random
 import time
 
-url_root_list = ['https://www.uuks5.com',
-                 'https://www.bqguu.cc']
-
-num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
-novel_name = "神秘复苏"
-url_root = ''
-url_index = "https://www.bqgui.cc/book/66/"
-for url_rt in url_root_list:
-    if url_rt in url_index:
-        url_root = url_rt
-        break
-    
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Encoding": "gzip, deflate",
@@ -55,10 +43,9 @@ find_chapter_name = {
 
 skip_chapter = '展开全部章节'
 
-def get_novel():
+def get_novel(url_index, url_root, num = 0):
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
-    global num
-    index_list = get_index()
+    index_list = get_index(url_index, url_root)
     with open(novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for chapter_list in index_list[num:]:
             # 判断是否需要跳过当前章节
@@ -69,7 +56,7 @@ def get_novel():
             else:         
                 print(f"正在下载{num}：{chapter_list[1]}")
                 
-            paragraphs_list = get_chapter(chapter_list) # 抓取单章的内容
+            paragraphs_list = get_chapter(url_root, chapter_list) # 抓取单章的内容
             
             # 判断是否需要写入章节标题
             if find_chapter_name.get(url_root): 
@@ -88,10 +75,10 @@ def get_novel():
             ran = random.randint(1,3)
             time.sleep(ran)
 
-def get_index():
+def get_index(url_index, url_root):
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
     bes = get_page(url_index)
-    index_list = process_index_page(bes)    
+    index_list = process_index_page(url_root, bes)    
     return index_list
 
 def get_page(url_page):
@@ -101,18 +88,18 @@ def get_page(url_page):
     bes = BeautifulSoup(req.text, "lxml")
     return bes
 
-def process_index_page(beautifulsoup):
+def process_index_page(url_root, beautifulsoup):
     """对目录页的html内容进行处理，获得章节网址-章节标题的列表"""
-    texts = extract_text(beautifulsoup, find_index_params)
-    index_list = extract_index_list(texts)       
+    texts = extract_text(url_root, beautifulsoup, find_index_params)
+    index_list = extract_index_list(url_root, texts)       
     return index_list
 
-def extract_text(beautifulsoup, find_params):
+def extract_text(url_root, beautifulsoup, find_params):
     tag_name, attrs = find_params.get(url_root)
     texts = beautifulsoup.find(tag_name, **attrs)
     return texts
 
-def extract_index_list(texts):
+def extract_index_list(url_root, texts):
     """提取内容得到章节网址-章节标题的列表"""
     words = [] #创建空的列表，存入每章节的url与章节名称
     
@@ -125,13 +112,13 @@ def extract_index_list(texts):
         words.append(word) #最终加入总的大列表中并返回  
     return words
 
-def get_chapter(chapter_list):
+def get_chapter(url_root, chapter_list):
     """依次抓取每章的文本内容"""
     while True:
         try:
             bes = get_page(chapter_list[0])
             try:
-                texts_list = process_chapter_page(bes)
+                texts_list = process_chapter_page(url_root, bes)
             except AttributeError as e:
                 print(f"出现错误：{e}，正在重新运行...")
                 time.sleep(1) # 请求失败后延迟1s再次请求
@@ -142,9 +129,9 @@ def get_chapter(chapter_list):
             time.sleep(1) # 请求失败后延迟1s再次请求 
     return texts_list       
         
-def process_chapter_page(beautifulsoup):
+def process_chapter_page(url_root, beautifulsoup):
     """处理章节页"""
-    texts = extract_text(beautifulsoup, find_content_params)
+    texts = extract_text(url_root, beautifulsoup, find_content_params)
     tag = find_extract_params.get(url_root)
     if tag:
         par_list = extract_paragraph(texts, tag)
@@ -157,4 +144,15 @@ def extract_paragraph(texts, tag):
     return par_list
     
 if __name__ == '__main__':
-    get_novel()
+    url_root_list = ['https://www.uuks5.com',
+                     'https://www.bqguu.cc']
+
+    num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
+    novel_name = "神秘复苏"
+    url_root = ''
+    url_index = "https://www.bqguu.cc/book/66/"
+    for url_rt in url_root_list:
+        if url_rt in url_index:
+            url_root = url_rt
+            break
+    get_novel(url_index, url_root, num)
