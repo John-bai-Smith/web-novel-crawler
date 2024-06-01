@@ -2,44 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import time
+import json
+file_address = 'demo_files/web_crawler/'
 
-header = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Encoding": "gzip, deflate",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-    "Cache-Control": "no-cache",
-    "Priority": "u=0, i",
-    "Sec-Ch-Ua": '"Chromium";v="124", "Microsoft Edge";v="124", "Not-A.Brand";v="99"',
-    "Sec-Ch-Ua-Mobile": "?0",
-    "Sec-Ch-Ua-Platform": "Windows",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-}
-
-# 创建一个字典，键是url_root的值，值是查找参数
-find_index_params = {
-    "https://www.uuks5.com": ('ul', {'id': 'chapterList'}),
-    "https://www.bqguu.cc": ('div', {'class': 'listmain'}),
-}
-
-find_content_params = {
-    "https://www.uuks5.com": ('div', {'id': 'TextContent'}),
-    "https://www.bqguu.cc": ('div', {'id': 'chaptercontent'}),
-}
-
-find_extract_params = {
-    "https://www.uuks5.com": 'p',
-    "https://www.bqguu.cc": '',
-}
-
-find_chapter_name = {
-    "https://www.uuks5.com": True,
-    "https://www.bqguu.cc": False,
-}
+# 从JSON文件中读取字典
+with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    header = data['header']
+    find_index_params = data['find_index_params']
+    find_content_params = data['find_content_params']
+    find_extract_params = data['find_extract_params']
+    find_chapter_name = data['find_chapter_name']
 
 skip_chapter = '展开全部章节'
 

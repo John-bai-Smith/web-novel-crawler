@@ -1,6 +1,6 @@
 ## 用于在小说中部分章节缺失内容时，直接在calibre用编辑器打开EPUB文件，添加内容
 ## 注意：每段前加了两个空格，需要在calibre编辑器里用查找替换将两个空格替换为缩进两字符
-file_address = 'domo_files/label_text/'
+file_address = 'demo_files/label_text/'
 
 name = '新建文本文档'
 file_name = file_address + name + '.txt'

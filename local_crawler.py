@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from extract_chapter_info import read_html, get_chapter_list_local, delete_if_exists
-file_address = 'domo_files/local_crawler/'
+file_address = 'demo_files/local_crawler/'
 
 def get_chapter_local(chapter_name):
     """依次抓取每章的文本内容"""

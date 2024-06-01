@@ -1,6 +1,6 @@
 # 用于去除爬到的文本中插入的垃圾词语、短句
 import json
-file_address = 'domo_files/erase_word/'
+file_address = 'demo_files/erase_word/'
 
 name = '新建文本文档'
 file_name = file_address + name + '.txt'
