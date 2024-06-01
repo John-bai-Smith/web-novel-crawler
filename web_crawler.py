@@ -13,6 +13,7 @@ with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
     find_content_params = data['find_content_params']
     find_extract_params = data['find_extract_params']
     find_chapter_name = data['find_chapter_name']
+    url_root_list = data['url_root_list']
 
 skip_chapter = '展开全部章节'
 
@@ -117,9 +118,6 @@ def extract_paragraph(texts, tag):
     return par_list
     
 if __name__ == '__main__':
-    url_root_list = ['https://www.uuks5.com',
-                     'https://www.bqguu.cc']
-
     num = 0 # 决定了从第几章开始新增，用于增量式更新文本内容
     novel_name = "神秘复苏"
     url_root = ''
