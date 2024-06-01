@@ -104,7 +104,7 @@ def get_chapter(url_root, chapter_list):
     return texts_list       
         
 def process_chapter_page(url_root, beautifulsoup):
-    """处理章节页"""
+    """处理章节页，获得章节内容文本"""
     texts = extract_text(url_root, beautifulsoup, find_content_params)
     tag = find_extract_params.get(url_root)
     if tag:
@@ -114,6 +114,7 @@ def process_chapter_page(url_root, beautifulsoup):
     return par_list
 
 def extract_paragraph(texts, tag):
+    """根据xml标签tag提取文本"""
     par_list = texts.find_all(tag)
     return par_list
     
