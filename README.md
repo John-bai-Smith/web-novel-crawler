@@ -18,7 +18,7 @@
 
 - 清除文本中的垃圾词组
 
-![erase_word_demo.jpg](./erase_word_demo.jpg "Demonstration for erase_word.py")
+![erase_word_demo.jpg](./figures/erase_word_demo.jpg "Demonstration for erase_word.py")
 
 
 # 更新日志
