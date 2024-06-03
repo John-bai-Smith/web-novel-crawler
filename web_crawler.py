@@ -39,13 +39,17 @@ def get_novel(url_index, num = 0):
             else:
                 file.write('\n\n\n') # 部分网页内容带有章节标题，不需要再单独写入
             
-            for chapter_url in chapter_list[1:]:        
-                paragraphs_list = get_chapter(url_root, chapter_url) # 抓取单章的内容
-                # 逐行写入章节内容    
-                for line in paragraphs_list: 
-                    line = line.get_text().strip()
-                    if line:
-                        file.write(f'    {line}\n\n')
+            for chapter_url in chapter_list[1:]:
+                if chapter_url:        
+                    paragraphs_list = get_chapter(url_root, chapter_url) # 抓取单章的内容
+                    # 逐行写入章节内容    
+                    for line in paragraphs_list: 
+                        line = line.get_text().strip()
+                        if line:
+                            file.write(f'    {line}\n\n')
+                else:
+                    print(f"空链接{num}：{chapter_list[0]}，已跳过")
+                    continue
             num = num + 1  # 章节计数加1
             
             # 通过延时来降低爬虫的请求频率，减小被反爬的风险
@@ -98,16 +102,20 @@ def get_chapter(url_root, chapter_url):
     """依次抓取每章的文本内容"""
     while True:
         try:
-            bes = get_page(chapter_url, url_root)
-            try:
-                texts_list = process_chapter_page(url_root, bes)
-            except requests.exceptions.RequestException as e:
-                print(f"出现网络错误：{e}，正在重新运行...")
-                time.sleep(5) # 网络请求失败后延迟5s再次请求
-            except AttributeError as e:
-                print(f"出现错误：{e}，正在重新运行...")
-                time.sleep(1) # 请求失败后延迟1s再次请求        
-            if texts_list:    
+            if chapter_url:
+                bes = get_page(chapter_url, url_root)
+                try:
+                    texts_list = process_chapter_page(url_root, bes)
+                except requests.exceptions.RequestException as e:
+                    print(f"出现网络错误：{e}，正在重新运行...")
+                    time.sleep(5) # 网络请求失败后延迟5s再次请求
+                except AttributeError as e:
+                    print(f"出现错误：{e}，正在重新运行...")
+                    time.sleep(1) # 请求失败后延迟1s再次请求        
+                if texts_list:    
+                    break
+            else: # 当链接为空时跳过
+                print(f"get_chapter()接收到空链接")
                 break
         except Exception as e:
             print(f"出现错误：{e}，正在重新运行...")
