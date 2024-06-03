@@ -15,24 +15,46 @@
         "Upgrade-Insecure-Requests": "1",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
     },
+    "find_encoding": {
+        "https://www.uuks5.com": "utf-8",
+        "https://www.bqguu.cc": "utf-8",
+        "https://www.qianyege.com": "gbk",
+        "https://www.83zws.com": "utf-8"
+    },
     "find_index_params": {
         "https://www.uuks5.com": ["ul", {"id": "chapterList"}],
-        "https://www.bqguu.cc": ["div", {"class": "listmain"}]
+        "https://www.bqguu.cc": ["div", {"class": "listmain"}],
+        "https://www.qianyege.com": ["div", {"id": "list"}],
+        "https://www.83zws.com": ["div", {"id": "list"}]
     },
     "find_content_params": {
         "https://www.uuks5.com": ["div", {"id": "TextContent"}],
-        "https://www.bqguu.cc": ["div", {"id": "chaptercontent"}]
+        "https://www.bqguu.cc": ["div", {"id": "chaptercontent"}],
+        "https://www.qianyege.com": ["div", {"id": "content"}],
+        "https://www.83zws.com": ["div", {"id": "booktxt"}]
     },
     "find_extract_params": {
         "https://www.uuks5.com": "p",
-        "https://www.bqguu.cc": ""
+        "https://www.bqguu.cc": "",
+        "https://www.qianyege.com": "",
+        "https://www.83zws.com": "p"
     },
-    "find_chapter_name": {
+    "find_page_num": {
+        "https://www.uuks5.com": 1,
+        "https://www.bqguu.cc": 1,
+        "https://www.qianyege.com": 1,
+        "https://www.83zws.com": 2
+    },
+    "write_chapter_name": {
         "https://www.uuks5.com": true,
-        "https://www.bqguu.cc": false
+        "https://www.bqguu.cc": false,
+        "https://www.qianyege.com": true,
+        "https://www.83zws.com": true
     },
     "url_root_list": [
         "https://www.uuks5.com",
-        "https://www.bqguu.cc"
+        "https://www.bqguu.cc",
+        "https://www.qianyege.com",
+        "https://www.83zws.com"
     ]
 }
