@@ -89,13 +89,14 @@ def extract_index_list(url_root, texts):
     for chapter in chapters:
         name = chapter.string #取出字符串，可以看出字符串只有章节号与章节名称，刚好符合我们所需
         url1 = url_root + chapter.get("href") #获得每一章节小说的url，可从html代码中看到每一个"href"前边均缺少初始的url，因此需要加上
-        word = [name, url1] #以列表格式存储
-        page_num = find_page_num.get(url_root)
-        if page_num > 1:           
-            for number in list(range(2, page_num + 1)):
-                url_tmp = url1.replace(".html", "") + "_" + str(number) + ".html"
-                word.append(url_tmp)          
-        words.append(word) #最终加入总的大列表中并返回
+        if '.html' in url1:  #判断url是否为正确的链接
+            word = [name, url1] #以列表格式存储
+            page_num = find_page_num.get(url_root)
+            if page_num > 1:           
+                for number in list(range(2, page_num + 1)):
+                    url_tmp = url1.replace(".html", "") + "_" + str(number) + ".html"
+                    word.append(url_tmp)          
+            words.append(word) #最终加入总的大列表中并返回
     return words
 
 def get_chapter(url_root, chapter_url):
@@ -147,6 +148,6 @@ def extract_url_root(url):
 
 if __name__ == '__main__':
     num = 8 # 决定了从第几章开始新增，用于增量式更新文本内容
-    novel_name = "衣冠不南渡-new"
+    novel_name = "衣冠不南渡"
     url_index = "https://www.83zws.com/book/339/339093/"
     get_novel(url_index, num)
