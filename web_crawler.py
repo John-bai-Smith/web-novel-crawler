@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import random
 import time
 import json
+import signal
+import sys
 file_address = 'demo_files/web_crawler/'
 
 # 从JSON文件中读取字典
@@ -18,20 +20,23 @@ with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
     url_root_list = data['url_root_list']  # 源网站列表
 
 skip_chapter = '展开全部章节'
+start_time = time.time()
 
-def get_novel(url_index, num = 0):
+def get_novel(url_index, num_start = 0):
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
+    num = num_start
     url_root = extract_url_root(url_index)
     index_list = get_index(url_index, url_root)
     with open(novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for chapter_list in index_list[num:]:
+            current_time = time.time()
             # 判断是否需要跳过当前章节
             if skip_chapter in chapter_list[0]:
                 print(f"已跳过{num}：{chapter_list[0]}")
                 num = num + 1
                 continue
             else:         
-                print(f"正在下载{num}：{chapter_list[0]}")
+                print(f"正在下载{num}：{chapter_list[0]}，已运行时间：{current_time - start_time}s")
             
              # 判断是否需要写入章节标题
             if write_chapter_name.get(url_root): 
@@ -55,6 +60,9 @@ def get_novel(url_index, num = 0):
             # 通过延时来降低爬虫的请求频率，减小被反爬的风险
             ran = random.randint(3,5)
             time.sleep(ran)
+        
+    # 后处理
+    post_process(num - num_start)
 
 def get_index(url_index, url_root):
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
@@ -146,8 +154,35 @@ def extract_url_root(url):
             break
     return url_root
 
+def post_process(total_num):
+    """打印脚本总运行时间和每章平均耗时"""
+    total_time = count_total_time()
+    average_time = total_time // (total_num + 1)
+    print("****     执行成功     ****")
+    print(f"共下载{total_num}章，耗时{format_time(total_time)}，平均每章耗时{format_time(average_time)}")
+
+def count_total_time():
+    total_time = time.time() - start_time
+
+def format_time(seconds):
+    if seconds < 60:
+        return f"{seconds}秒"
+    elif seconds < 3600:
+        return f"{seconds // 60}分钟"
+    else:
+        m, s = divmod(seconds, 60)
+        h, m = divmod(m, 60)
+        return f"{h}小时{m}分钟"
+
+def signal_handler(sig, frame):
+    print("****     程序中断     ****")
+    print(f"共运行{format_time(count_total_time())}")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+    
 if __name__ == '__main__':
-    num = 8 # 决定了从第几章开始新增，用于增量式更新文本内容
-    novel_name = "衣冠不南渡"
-    url_index = "https://www.83zws.com/book/339/339093/"
-    get_novel(url_index, num)
+    num_start = 8 # 决定了从第几章开始新增，用于增量式更新文本内容
+    novel_name = "学霸的黑科技系统"
+    url_index = "https://www.83zws.com/book/249/249200/"
+    get_novel(url_index, num_start)
