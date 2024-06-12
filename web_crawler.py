@@ -157,22 +157,23 @@ def extract_url_root(url):
 def post_process(total_num):
     """打印脚本总运行时间和每章平均耗时"""
     total_time = count_total_time()
-    average_time = total_time // (total_num + 1)
+    average_time = round(total_time / total_num)
     print("****     执行成功     ****")
     print(f"共下载{total_num}章，耗时{format_time(total_time)}，平均每章耗时{format_time(average_time)}")
 
 def count_total_time():
-    total_time = time.time() - start_time
+    return time.time() - start_time
 
 def format_time(seconds):
     if seconds < 60:
-        return f"{seconds}秒"
+        return f"{round(seconds)}秒"
     elif seconds < 3600:
-        return f"{seconds // 60}分钟"
+        m, s = divmod(seconds, 60)
+        return f"{round(m)}分钟{round(s)}秒"
     else:
         m, s = divmod(seconds, 60)
         h, m = divmod(m, 60)
-        return f"{h}小时{m}分钟"
+        return f"{round(h)}小时{round(m)}分钟"
 
 def signal_handler(sig, frame):
     print("****     程序中断     ****")
