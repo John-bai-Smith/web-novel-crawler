@@ -2,8 +2,11 @@
 import json
 file_address = 'demo_files/erase_word/'
 
-name = '新建文本文档'
-file_name = file_address + name + '.txt'
+name = '呢喃诗章'
+if name == '新建文本文档':
+    file_name = file_address + name + '.txt'
+else:
+    file_name = name + '.txt'
 file_modified_name = file_address + name + '_erased.txt'
 
 # 从JSON文件中读取需要清除的字符串

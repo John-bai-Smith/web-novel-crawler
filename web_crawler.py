@@ -5,6 +5,7 @@ import time
 import json
 import signal
 import sys
+import unicodedata
 file_address = 'demo_files/web_crawler/'
 
 # 从JSON文件中读取字典
@@ -35,8 +36,9 @@ def get_novel(url_index, num_start = 0):
                 print(f"已跳过{num}：{chapter_list[0]}")
                 num = num + 1
                 continue
-            else:         
-                print(f"正在下载{num}：{chapter_list[0]}，已运行时间：{current_time - start_time}s")
+            else:
+                chapter_tmp = pad_to_width(chapter_list[0], 40)        
+                print(f"正在下载{num}：{chapter_tmp}  已运行时间：{format_time(current_time - start_time)}")
             
              # 判断是否需要写入章节标题
             if write_chapter_name.get(url_root): 
@@ -64,6 +66,45 @@ def get_novel(url_index, num_start = 0):
     # 后处理
     post_process(num - num_start)
 
+def get_display_width(s):
+    """计算字符串的显示宽度"""
+    width = 0
+    for char in s:
+        if unicodedata.east_asian_width(char) in 'WF':
+            width += 2
+        else:
+            width += 1
+    return width
+
+def omit_too_long_string(s, width):
+    """将显示宽度过大的字符串调整为固定宽度，末尾替换为省略号"""
+    ellipsis = '...'
+    ellipsis_width = get_display_width(ellipsis)
+    
+    if get_display_width(s) <= width:
+        return s
+    
+    truncated_width = width - ellipsis_width
+    truncated_string = ''
+    current_width = 0
+    
+    for char in s:
+        char_width = 2 if unicodedata.east_asian_width(char) in 'WF' else 1
+        if current_width + char_width > truncated_width:
+            break
+        truncated_string += char
+        current_width += char_width
+    
+    return truncated_string + ellipsis + ' ' * (truncated_width - current_width)
+
+def pad_to_width(s, width):
+    """填充字符串使其达到指定的显示宽度"""
+    current_width = get_display_width(s)
+    if current_width < width:
+        return s + ' ' * (width - current_width)
+    else:
+        return omit_too_long_string(s, width)
+    
 def get_index(url_index, url_root):
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
     bes = get_page(url_index, url_root)
@@ -183,7 +224,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 8 # 决定了从第几章开始新增，用于增量式更新文本内容
-    novel_name = "学霸的黑科技系统"
-    url_index = "https://www.83zws.com/book/249/249200/"
+    num_start = 8 # 决定了从第几章开始新增，用于增量式更新文本内容 83zws要从8开始
+    novel_name = "呢喃诗章"
+    url_index = "https://www.83zws.com/book/272/272602/"
     get_novel(url_index, num_start)
