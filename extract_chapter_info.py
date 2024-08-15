@@ -40,8 +40,8 @@ def write_files(words, file_1, file_2):
             file_name.write(str(i) + '-' + word[1] + '\n')
         
 if __name__ == '__main__':
-    url_root = 'https://www.31xs.com'
-    file_address = 'demo_files/local_crawler/'
+    url_root = 'https://www.83zws.com'
+    file_address = '' #'demo_files/local_crawler/'
     html_file_path = file_address + 'content.html'
     url_file_path = file_address + 'chapter_url.txt'
     name_file_path = file_address + 'chapter_name.txt'
