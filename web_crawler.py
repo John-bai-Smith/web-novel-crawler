@@ -231,8 +231,8 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 2765 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0，83zws要从8开始
-    num_stop = 0 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
-    novel_name = "呢喃诗章+"
-    url_index = "https://www.uuks5.com/book/466613/"
-    get_novel(url_index, num_start)
+    num_start = 2774 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
+    num_stop = 2865 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
+    novel_name = "呢喃诗章+2750-2841"
+    url_index = "https://www.69hsw.com/24265/"
+    get_novel(url_index, num_start, num_stop)
