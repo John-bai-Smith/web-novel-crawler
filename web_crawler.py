@@ -23,10 +23,10 @@ with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
 skip_chapter = '展开全部章节'
 start_time = time.time()
 
-def get_novel(url_index, num_start = 0):
+def get_novel(url_index, num_start = 0, num_stop = float('inf')):
     """抓取小说目录，再依次抓取每章内容，增量式写入文件中"""
     num = num_start
-    url_root = extract_url_root(url_index)
+    url_root = get_url_root(url_index)
     index_list = get_index(url_index, url_root)
     with open(novel_name + ".txt", "a", encoding = "utf-8") as file:  #写入文件路径 + 章节名称 + 后缀    
         for chapter_list in index_list[num:]:
@@ -57,6 +57,8 @@ def get_novel(url_index, num_start = 0):
                 else:
                     print(f"空链接{num}：{chapter_list[0]}，已跳过")
                     continue
+            if num >= num_stop:
+                break
             num = num + 1  # 章节计数加1
             
             # 通过延时来降低爬虫的请求频率，减小被反爬的风险
@@ -108,7 +110,10 @@ def pad_to_width(s, width):
 def get_index(url_index, url_root):
     """从小说的目录页获取每章对应的网址，将url和目录名保存在列表中返回"""   
     bes = get_page(url_index, url_root)
-    index_list = process_index_page(url_root, bes)    
+    index_list = process_index_page(url_root, bes)
+    # ********************************************************** #
+    # 增量更新时在此处加断点，查看index_list的值
+    # ********************************************************** #    
     return index_list
 
 def get_page(url_page, url_root):
@@ -125,6 +130,7 @@ def process_index_page(url_root, beautifulsoup):
     return index_list
 
 def extract_text(url_root, beautifulsoup, find_params):
+    """提取已抓取的文本中带有特定标签的部分"""
     tag_name, attrs = find_params.get(url_root)
     texts = beautifulsoup.find(tag_name, **attrs)
     return texts
@@ -187,7 +193,8 @@ def extract_paragraph(texts, tag):
     par_list = texts.find_all(tag)
     return par_list
 
-def extract_url_root(url):
+def get_url_root(url):
+    """根据url获取对应的网站首页的网址"""
     url_root = ""
     for url_rt in url_root_list:
         if url_rt in url:
@@ -224,7 +231,8 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 8 # 决定了从第几章开始新增，用于增量式更新文本内容 83zws要从8开始
-    novel_name = "呢喃诗章"
-    url_index = "https://www.83zws.com/book/272/272602/"
+    num_start = 2765 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0，83zws要从8开始
+    num_stop = 0 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
+    novel_name = "呢喃诗章+"
+    url_index = "https://www.uuks5.com/book/466613/"
     get_novel(url_index, num_start)
