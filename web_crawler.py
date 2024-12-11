@@ -6,6 +6,7 @@ import json
 import signal
 import sys
 import unicodedata
+import re
 file_address = 'demo_files/web_crawler/'
 
 # 从JSON文件中读取字典
@@ -49,7 +50,7 @@ def get_novel(url_index, num_start = 0, num_stop = float('inf')):
                     for line in paragraphs_list:
                         line = line.get_text().strip()
                         if first_iteration: # 只在第一次循环时执行
-                            line = line.replace(chapter_list[0], "", 1)  # 检查章节内容的第一行是否包含标题，若有则将其删除
+                            line = check_chapter_name(chapter_list[0], line) # 检查章节内容的第一行是否包含标题，若有则将其删除
                             first_iteration = False  # 更新标志变量
                         if line:
                             file.write(f'    {line}\n\n')
@@ -67,6 +68,17 @@ def get_novel(url_index, num_start = 0, num_stop = float('inf')):
     # 后处理
     post_process(num - num_start) 
 
+def check_chapter_name(chapter_name, line):
+    """去除章节内容第一行中的章节标题"""
+    
+    # 发现有的网站目录页的章节标题中不带“-”，但章节内容第一行中的标题带“-”，
+    # 因此需要用正则表达式替换，同时不能把章节标题后面紧跟着的别的字符给误删掉
+    
+    # 创建一个正则表达式模式，允许在每个字符之间插入一个可选的非字母字符（不包括中文字符和中文双引号）
+    pattern = re.compile(rf"({''.join([char + r'[^\"“”\u4e00-\u9fa5]*' for char in chapter_name])})")
+    # 使用正则表达式替换匹配的部分为空字符串
+    return pattern.sub('', line, count = 1)
+    
 def get_display_width(s):
     """计算字符串的显示宽度"""
     width = 0
@@ -230,7 +242,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 2784 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
+    num_start = 2807 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
     num_stop = 2865 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
     novel_name = "呢喃诗章+2750-2841"
     url_index = "https://www.69hsw.com/24265/"
