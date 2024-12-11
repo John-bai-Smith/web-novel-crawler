@@ -17,7 +17,6 @@ with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
     find_content_params = data['find_content_params'] # 章节页标签
     find_extract_params = data['find_extract_params'] # 章节内容标签
     find_page_num = data['find_page_num']  # 单章的页数
-    write_chapter_name = data['write_chapter_name']  # 是否单独写入章节名
     url_root_list = data['url_root_list']  # 源网站列表
 
 skip_chapter = '展开全部章节'
@@ -40,18 +39,18 @@ def get_novel(url_index, num_start = 0, num_stop = float('inf')):
                 chapter_tmp = pad_to_width(chapter_list[0], 40)        
                 print(f"正在下载{num}：{chapter_tmp}  已运行时间：{format_time(current_time - start_time)}")
             
-             # 判断是否需要写入章节标题
-            if write_chapter_name.get(url_root): 
-                file.write(f'\n\n\n{chapter_list[0]}\n\n') # 写入章节标题
-            else:
-                file.write('\n\n\n') # 部分网页内容带有章节标题，不需要再单独写入
+            file.write(f'\n\n\n{chapter_list[0]}\n\n') # 写入章节标题
             
             for chapter_url in chapter_list[1:]:
                 if chapter_url:        
                     paragraphs_list = get_chapter(url_root, chapter_url) # 抓取单章的内容
-                    # 逐行写入章节内容    
-                    for line in paragraphs_list: 
+                    # 逐行写入章节内容
+                    first_iteration = True  # 标志变量，表示是否是第一次循环
+                    for line in paragraphs_list:
                         line = line.get_text().strip()
+                        if first_iteration: # 只在第一次循环时执行
+                            line = line.replace(chapter_list[0], "", 1)  # 检查章节内容的第一行是否包含标题，若有则将其删除
+                            first_iteration = False  # 更新标志变量
                         if line:
                             file.write(f'    {line}\n\n')
                 else:
@@ -66,7 +65,7 @@ def get_novel(url_index, num_start = 0, num_stop = float('inf')):
             time.sleep(ran)
         
     # 后处理
-    post_process(num - num_start)
+    post_process(num - num_start) 
 
 def get_display_width(s):
     """计算字符串的显示宽度"""
@@ -231,7 +230,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 2774 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
+    num_start = 2784 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
     num_stop = 2865 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
     novel_name = "呢喃诗章+2750-2841"
     url_index = "https://www.69hsw.com/24265/"
