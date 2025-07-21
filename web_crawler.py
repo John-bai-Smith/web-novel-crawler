@@ -19,6 +19,7 @@ with open(f'{file_address}find_dictionary.json', 'r', encoding='utf-8') as f:
     find_extract_params = data['find_extract_params'] # 章节内容标签
     find_page_num = data['find_page_num']  # 单章的页数
     url_root_list = data['url_root_list']  # 源网站列表
+    ignore_html_check = data['ignore_html_check']  # 章节url不需要包含html
 
 skip_chapter = '展开全部章节'
 start_time = time.time()
@@ -75,8 +76,11 @@ def check_chapter_name(chapter_name, line):
     # 因此需要用正则表达式替换，同时不能把章节标题后面紧跟着的别的字符给误删掉
     # 去除多余标题时忽略英文字母大小写
     
+    chapter_name_without_spaces = chapter_name.replace(" ", "") # 移除空格
+    
     # 创建一个正则表达式模式，允许在每个字符之间插入一个可选的非字母字符（不包括中文字符和中文双引号）
-    pattern = re.compile(rf"({''.join([f'[{char.lower()}{char.upper()}]' + r'[^\"“”\u4e00-\u9fa5]*' for char in chapter_name])})", re.IGNORECASE)
+    pattern = re.compile(rf"({''.join([f'[{char.lower()}{char.upper()}]' + r'[^\"“”\u4e00-\u9fa5]*' for char in chapter_name_without_spaces])})", re.IGNORECASE)
+    
     # 使用正则表达式替换匹配的部分为空字符串
     return pattern.sub('', line, count = 1)
     
@@ -156,7 +160,7 @@ def extract_index_list(url_root, texts):
     for chapter in chapters:
         name = chapter.string #取出字符串，可以看出字符串只有章节号与章节名称，刚好符合我们所需
         url1 = url_root + chapter.get("href") #获得每一章节小说的url，可从html代码中看到每一个"href"前边均缺少初始的url，因此需要加上
-        if '.html' in url1:  #判断url是否为正确的链接
+        if '.html' in url1 or url_root in ignore_html_check:  #判断url是否为正确的链接
             word = [name, url1] #以列表格式存储
             page_num = find_page_num.get(url_root)
             if page_num > 1:           
@@ -243,8 +247,9 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
     
 if __name__ == '__main__':
-    num_start = 8 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
+    num_start = 3537 # 决定了从第几章开始新增，用于增量式更新文本内容，默认为0
     num_stop = 739 # 决定了从第几章结束新增，用于增量式更新文本内容，默认为无穷大
-    novel_name = "什么叫六边形打野啊-1-712"
-    url_index = "https://www.69hsw.com/24738/"
-    get_novel(url_index, num_start, num_stop)
+    novel_name = "呢喃诗章"
+    url_index = "https://www.biquge123.uk/51669"
+    get_novel(url_index, num_start)
+    # get_novel(url_index, num_start, num_stop)
