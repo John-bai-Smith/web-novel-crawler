@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 def build_ad_regex(keywords):
     """把广告词变成模糊正则"""
@@ -22,8 +23,9 @@ def clean_text(input_file, output_file, keywords=None):
         "这幺": "这么",
         "怎幺": "怎么",
         "那幺": "那么",
-        "要么": "要么",
+        "要幺": "要么",
         "什幺": "什么",
+        "多幺": "多么",
     }
         
     # 默认广告关键词（可按需扩展）
@@ -57,9 +59,12 @@ def clean_text(input_file, output_file, keywords=None):
 
 
 if __name__ == "__main__":
-    name = "input"
     suffix = ".txt"
-    input_txt = name + suffix     # 原文件
-    output_txt = name + "_cleaned" + suffix   # 清洗后文件
+    name = "input"
+    folder = "kaf-cli_v1.3.6-3_windows_386"
+    
+    parent_dir = Path(__file__).resolve().parent.parent
+    input_txt = parent_dir / folder / (name + suffix)     # 原文件
+    output_txt = parent_dir / folder / (name + "_cleaned" + suffix)   # 清洗后文件
 
     clean_text(input_txt, output_txt)
