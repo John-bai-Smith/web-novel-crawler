@@ -33,6 +33,9 @@ def clean_text(input_file, output_file, keywords=None):
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
     
+    wrong_count = 0
+    ad_count = 0
+    
     with open(input_file, "r", encoding="utf-8") as fin, \
          open(output_file, "w", encoding="utf-8") as fout:
 
@@ -41,11 +44,16 @@ def clean_text(input_file, output_file, keywords=None):
             for wrong, correct in typo_dict.items():
                 if wrong in line:
                     line = line.replace(wrong, correct)
+                    wrong_count = wrong_count + 1
             
              # 2. 正则广告检测
             matches = ad_pattern.findall(line)
             if len(matches) < 1:
                 fout.write(line)
+            else:
+                ad_count = ad_count + 1
+    
+    print(f"共修正错别字{wrong_count}个，去除广告{ad_count}句。")
 
 
 if __name__ == "__main__":
