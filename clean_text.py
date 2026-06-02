@@ -59,12 +59,11 @@ def clean_text(input_file, output_file, keywords=None):
 
 
 if __name__ == "__main__":
-    suffix = ".txt"
-    name = "input"
+    file_name = "input.txt"
+    added_suffix = "_cleaned"
     folder = "kaf-cli_v1.3.6-3_windows_386"
-    
     parent_dir = Path(__file__).resolve().parent.parent
-    input_txt = parent_dir / folder / (name + suffix)     # 原文件
-    output_txt = parent_dir / folder / (name + "_cleaned" + suffix)   # 清洗后文件
+    input_txt = parent_dir / folder / file_name  # 原文件
+    output_txt = input_txt.with_name(input_txt.stem + added_suffix + input_txt.suffix)  # 清洗后文件
 
     clean_text(input_txt, output_txt)
