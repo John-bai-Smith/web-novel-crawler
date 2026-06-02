@@ -11,7 +11,7 @@ def build_ad_regex(keywords):
         regex_list.append(pattern)
     return "|".join(f"(?:{r})" for r in regex_list)
 
-def clean_text(input_file, output_file, keywords=None):
+def clean_text(input_file, output_file, record, keywords=None):
     """去除txt文本中的广告行，并修复错别字:
     param input_file: 原始txt文件路径
     param output_file: 清洗后txt文件路径
@@ -30,7 +30,7 @@ def clean_text(input_file, output_file, keywords=None):
         
     # 默认广告关键词（可按需扩展）
     if keywords is None:
-        keywords = ["手打无错", "无错章节", "速读谷", "更新不易", "记住我们网", "最新小说首发", "写到这里读者", "写到这里书友"]
+        keywords = ["手打无错", "无错章节", "章节更新", "速读谷", "更新不易", "最快更新", "记住我们网", "最新小说首发", "写到这里读者", "写到这里书友"]
 
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
@@ -39,7 +39,8 @@ def clean_text(input_file, output_file, keywords=None):
     ad_count = 0
     
     with open(input_file, "r", encoding="utf-8") as fin, \
-         open(output_file, "w", encoding="utf-8") as fout:
+         open(output_file, "w", encoding="utf-8") as fout, \
+         open(record, "w", encoding="utf-8") as frec:
 
         for line in fin:
             # 1. 错别字替换
@@ -53,6 +54,7 @@ def clean_text(input_file, output_file, keywords=None):
             if len(matches) < 1:
                 fout.write(line)
             else:
+                frec.write(line)
                 ad_count = ad_count + 1
     
     print(f"共修正错别字{wrong_count}个，去除广告{ad_count}句。")
@@ -65,5 +67,6 @@ if __name__ == "__main__":
     parent_dir = Path(__file__).resolve().parent.parent
     input_txt = parent_dir / folder / file_name  # 原文件
     output_txt = input_txt.with_name(input_txt.stem + added_suffix + input_txt.suffix)  # 清洗后文件
-
-    clean_text(input_txt, output_txt)
+    record_txt = parent_dir / folder / "ad_record.txt" # 记录检索出的广告句子
+    
+    clean_text(input_txt, output_txt, record_txt)
