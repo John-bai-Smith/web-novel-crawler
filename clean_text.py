@@ -30,7 +30,9 @@ def clean_text(input_file, output_file, record, keywords=None):
         
     # 默认广告关键词（可按需扩展）
     if keywords is None:
-        keywords = ["手打无错", "无错章节", "章节更新", "速读谷", "更新不易", "最快更新", "记住我们网", "最新小说首发", "写到这里读者", "写到这里书友"]
+        keywords = ["手打无错", "无错章节", "章节更新", "最新章节", "最新章節", \
+            "速读谷", "速讀谷", "更新不易", "最快更新", "记住我们网", "最新小说首发", \
+            "写到这里读者", "写到这里书友"]
 
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
