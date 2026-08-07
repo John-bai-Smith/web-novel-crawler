@@ -3,11 +3,11 @@ from pathlib import Path
 
 def build_ad_regex(keywords):
     """把广告词变成模糊正则"""
-    
+
     regex_list = []
     for kw in keywords:
-        # 在字与字之间允许插入任意非单词字符
-        pattern = "[^\\w]*".join(kw)
+        # 在字与字之间允许插入任意字符（包括中文）
+        pattern = ".*".join(re.escape(ch) for ch in kw)
         regex_list.append(pattern)
     return "|".join(f"(?:{r})" for r in regex_list)
 
