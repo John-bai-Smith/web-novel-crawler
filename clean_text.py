@@ -69,6 +69,6 @@ if __name__ == "__main__":
     parent_dir = Path(__file__).resolve().parent.parent
     input_txt = parent_dir / folder / file_name  # 原文件
     output_txt = input_txt.with_name(input_txt.stem + added_suffix + input_txt.suffix)  # 清洗后文件
-    record_txt = parent_dir / folder / "ad_record.txt" # 记录检索出的广告句子
+    record_txt = input_txt.with_name("ad_record.txt") # 记录检索出的广告句子
     
     clean_text(input_txt, output_txt, record_txt)
