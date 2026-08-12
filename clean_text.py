@@ -64,11 +64,16 @@ def clean_text(input_file, output_file, record, keywords=None):
 
 if __name__ == "__main__":
     file_name = "input.txt"
-    added_suffix = "_cleaned"
+    added_suffix = "_old"
     folder = "kaf-cli_v1.3.6-3_windows_386"
     parent_dir = Path(__file__).resolve().parent.parent
     input_txt = parent_dir / folder / file_name  # 原文件
-    output_txt = input_txt.with_name(input_txt.stem + added_suffix + input_txt.suffix)  # 清洗后文件
+    output_txt = input_txt.with_name("output.txt")  # 清洗后文件
     record_txt = input_txt.with_name("ad_record.txt") # 记录检索出的广告句子
     
     clean_text(input_txt, output_txt, record_txt)
+    
+    tmp_txt = input_txt
+    input_txt.rename(input_txt.with_name(input_txt.stem + added_suffix + input_txt.suffix)) # 将原文件重命名
+    output_txt.rename(tmp_txt.with_name(tmp_txt.stem + tmp_txt.suffix))
+    
