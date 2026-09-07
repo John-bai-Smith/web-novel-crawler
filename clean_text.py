@@ -1,4 +1,5 @@
 import re
+import chardet
 from pathlib import Path
 
 def build_ad_regex(keywords):
@@ -40,9 +41,15 @@ def clean_text(input_file, output_file, record, keywords=None):
     wrong_count = 0
     ad_count = 0
     
-    with open(input_file, "r", encoding="utf-8") as fin, \
-         open(output_file, "w", encoding="utf-8") as fout, \
-         open(record, "w", encoding="utf-8") as frec:
+    # 先检测编码
+    with open(input_file, 'rb') as f_in:
+        raw_data = f_in.read()
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+    
+    with open(input_file, "r", encoding=encoding) as fin, \
+         open(output_file, "w", encoding=encoding) as fout, \
+         open(record, "w", encoding=encoding) as frec:
 
         for line in fin:
             # 1. 错别字替换
