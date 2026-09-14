@@ -1,6 +1,7 @@
 import re
 import chardet
 from pathlib import Path
+from web_crawler import pad_to_width
 
 def build_ad_regex(keywords):
     """把广告词变成模糊正则"""
@@ -33,7 +34,8 @@ def clean_text(input_file, output_file, record, keywords=None):
     if keywords is None:
         keywords = ["手打无错", "无错章节", "章节更新", "最新章节", "最新章節", \
             "速读谷", "速讀谷", "更新不易", "最快更新", "记住我们网", "最新小说首发", \
-            "写到这里读者", "写到这里书友", "全网最快小说站"]
+            "写到这里读者", "写到这里书友", "全网最快小说站", "小说网首发", "收藏唯一网址",\
+            "记住更新地址", "搜索小说网"]
 
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
@@ -51,7 +53,7 @@ def clean_text(input_file, output_file, record, keywords=None):
          open(output_file, "w", encoding=encoding) as fout, \
          open(record, "w", encoding=encoding) as frec:
 
-        for line in fin:
+        for line_no, line in enumerate(fin, start=1):
             # 1. 错别字替换
             for wrong, correct in typo_dict.items():
                 if wrong in line:
@@ -63,7 +65,8 @@ def clean_text(input_file, output_file, record, keywords=None):
             if len(matches) < 1:
                 fout.write(line)
             else:
-                frec.write(line)
+                line_no_normal = pad_to_width(str(line_no), 12)
+                frec.write(f"[line {line_no_normal}] {line}")
                 ad_count = ad_count + 1
     
     print(f"共修正错别字{wrong_count}个，去除广告{ad_count}句。")
