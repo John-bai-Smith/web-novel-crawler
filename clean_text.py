@@ -35,7 +35,7 @@ def clean_text(input_file, output_file, record, keywords=None):
         keywords = ["手打无错", "无错章节", "章节更新", "最新章节", "最新章節", \
             "速读谷", "速讀谷", "更新不易", "最快更新", "记住我们网", "最新小说首发", \
             "写到这里读者", "写到这里书友", "全网最快小说站", "小说网首发", "收藏唯一网址",\
-            "记住更新地址", "搜索小说网"]
+            "记住更新地址", "搜索小说网", "提醒您查看最新内容"]
 
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
