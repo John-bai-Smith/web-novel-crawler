@@ -78,8 +78,15 @@ def check_chapter_name(chapter_name, line):
     
     chapter_name_without_spaces = chapter_name.replace(" ", "") # 移除空格
     
-    # 创建一个正则表达式模式，允许在每个字符之间插入一个可选的非字母字符（不包括中文字符和中文双引号）
-    pattern = re.compile(rf"({''.join([f'[{char.lower()}{char.upper()}]' + r'[^\"“”\u4e00-\u9fa5]*' for char in chapter_name_without_spaces])})", re.IGNORECASE)
+    # 把带反斜杠的字符类先定义好
+    exclude_chars = r'[^\"“”\u4e00-\u9fa5]*'
+
+    # 再构建 pattern
+    char_patterns = ''.join(
+        f'[{char.lower()}{char.upper()}]' + exclude_chars
+        for char in chapter_name_without_spaces
+    )
+    pattern = re.compile(rf"({char_patterns})", re.IGNORECASE)
     
     # 使用正则表达式替换匹配的部分为空字符串
     return pattern.sub('', line, count = 1)
