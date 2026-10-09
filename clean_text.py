@@ -37,7 +37,7 @@ def clean_text(input_file, output_file, record, keywords=None):
             "写到这里读者", "写到这里书友", "全网最快小说站", "小说网首发", "收藏唯一网址",\
             "记住更新地址", "搜索小说网", "提醒您查看最新内容", "请到查看最新章节", \
             "??????????", "章节来源于", "更多精彩章节", "立即访问获取章节", "更新最快", \
-            "查看最新地址"]
+            "查看最新地址", "82中文网", "追书app", "点击下一页继续阅读"]
 
     # 编译广告正则
     ad_pattern = re.compile(build_ad_regex(keywords))
@@ -75,7 +75,7 @@ def clean_text(input_file, output_file, record, keywords=None):
 
 
 if __name__ == "__main__":
-    file_name = "input.txt"
+    file_name = "深海余烬.txt"
     added_suffix = "_old"
     folder = "kaf-cli_v1.3.6-3_windows_386"
     parent_dir = Path(__file__).resolve().parent.parent
